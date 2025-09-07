@@ -1,5 +1,12 @@
-name: dec_todo_infra_pipeline
-on: workflow_dispatch
+name: dev_todo_infra_pipeline
+on:
+  push:
+    branches:
+    - main
+    - feature/**
+
+
+    
 permissions: 
   id-token: write
   contents: read
@@ -39,6 +46,7 @@ jobs:
   terraform_apply:
     runs-on: self-hosted
     name: terraform apply
+    needs: terraform_job
     steps: 
     - name: Checkout
       uses: actions/checkout@v5.0.0
