@@ -1,9 +1,5 @@
 name: dev_todo_infra_pipeline
-on:
-  push:
-    branches:
-    - main
-    - feature/**
+on: workflow_dispatch
 
 
     
