@@ -16,7 +16,7 @@ permissions:
   contents: read
 jobs:
   terraform_Build_Job:
-    name: terraform_init_scans_plan
+    name: Build_Job
     runs-on: self-hosted
     steps:
       - name: Checkout
@@ -51,7 +51,7 @@ jobs:
         working-directory: Environment/dev
 
   terraform_Deploy_Job:
-    name: Manual-validation+Apply
+    name: Deploy_Job
     runs-on: self-hosted
     needs: terraform_Build_Job
     if: github.ref == 'refs/heads/main'
