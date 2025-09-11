@@ -74,7 +74,7 @@ jobs:
         run: terraform init -input=false
         working-directory: Environment/dev
 
-      - name: Terraform applu
+      - name: Terraform apply
         id: apply
         run: terraform apply --auto-approve
         working-directory: Environment/dev
