@@ -1,22 +1,30 @@
-name: dev_todo_infra_pipeline
-on: workflow_dispatch
+name: dev-pipeline
+on: 
+  pull_request:
+    branches:
+      - main
+    paths:
+      - Environment/dev/**
+  push: 
+    branches:
+      - main
+    paths:
+      - Environment/dev/**
 
-
-    
-permissions: 
+permissions:
   id-token: write
   contents: read
 jobs:
-  terraform_job:
+  terraform_Build_Job:
+    name: terraform_init_scans_plan
     runs-on: self-hosted
-    name: terraform init
-    steps: 
+    steps:
       - name: Checkout
         uses: actions/checkout@v5.0.0
-
+        
       - name: Azure Login
         uses: Azure/login@v2.3.0
-        with:
+        with: 
           client-id: e492801a-02da-438c-83c4-1e1cbda3ec55
           tenant-id: 5a2c20bc-546f-43e0-b1a8-41fcb1f0c95c
           subscription-id: 470e0441-3f52-4fdf-8fc5-508cd114ccbc
@@ -24,50 +32,56 @@ jobs:
       - name: Terraform fmt
         id: fmt
         run: terraform fmt -check
-        working-directory: Environment/dev
         continue-on-error: true
-
+        working-directory: Environment/dev
+    
       - name: Terraform Init
         id: init
         run: terraform init -input=false
         working-directory: Environment/dev
         
-
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
         working-directory: Environment/dev
-
+    
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color -input=false
         working-directory: Environment/dev
 
-  terraform_apply:
+  terraform_Deploy_Job:
+    name: Manual-validation+Apply
     runs-on: self-hosted
-    name: terraform apply
-    needs: terraform_job
-    environment: Dev
-    steps: 
-    - name: Checkout
-      uses: actions/checkout@v5.0.0
+    needs: terraform_Build_Job
+    if: github.ref == 'refs/heads/main'
+    environment: dev
 
-    - name: Azure Login
-      uses: Azure/login@v2.3.0
-      with:
-        client-id: e492801a-02da-438c-83c4-1e1cbda3ec55
-        tenant-id: 5a2c20bc-546f-43e0-b1a8-41fcb1f0c95c
-        subscription-id: 470e0441-3f52-4fdf-8fc5-508cd114ccbc
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+        
+      - name: Azure Login
+        uses: Azure/login@v2.3.0
+        with: 
+          client-id: e492801a-02da-438c-83c4-1e1cbda3ec55
+          tenant-id: 5a2c20bc-546f-43e0-b1a8-41fcb1f0c95c
+          subscription-id: 470e0441-3f52-4fdf-8fc5-508cd114ccbc
 
-    - name: Terraform Init
-      id: init
-      run: terraform init -input=false
-      working-directory: Environment/dev
+      
+      - name: Terraform Init
+        id: init
+        run: terraform init -input=false
+        working-directory: Environment/dev
 
-    - name: Terraform Apply
-      id: apply
-      run: terraform apply --auto-approve
-      working-directory: Environment/dev
-     
+      - name: Terraform applu
+        id: apply
+        run: terraform apply --auto-approve
+        working-directory: Environment/dev
+    
+    
+
+        
        
- 
+        
+    
