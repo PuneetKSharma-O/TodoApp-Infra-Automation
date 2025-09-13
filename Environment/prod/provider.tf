@@ -7,7 +7,7 @@ terraform {
   }
   backend "azurerm" {
     resource_group_name  = "rg-todoapp-infra-automation"
-    storage_account_name = "todostg123"
+    storage_account_name = "todostg1234"
     container_name       = "tfstate"
     key                  = "prod1.terraform.tfstate"
   }
