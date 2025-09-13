@@ -1,15 +1,15 @@
-name: dev-pipeline
+name: prod-pipeline
 on: 
   pull_request:
     branches:
       - main
     paths:
-      - Environment/dev/**
+      - Environment/prod/**
   push: 
     branches:
       - main
     paths:
-      - Environment/dev/**
+      - Environment/prod/**
 
 permissions:
   id-token: write
@@ -33,29 +33,29 @@ jobs:
         id: fmt
         run: terraform fmt -check
         continue-on-error: true
-        working-directory: Environment/dev
+        working-directory: Environment/prod
     
       - name: Terraform Init
         id: init
         run: terraform init -input=false
-        working-directory: Environment/dev
+        working-directory: Environment/prod
         
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
-        working-directory: Environment/dev
+        working-directory: Environment/prod
     
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color -input=false
-        working-directory: Environment/dev
+        working-directory: Environment/prod
 
   terraform_Deploy_Job:
     name: Deploy_Job
     runs-on: self-hosted
     needs: terraform_Build_Job
     if: github.ref == 'refs/heads/main'
-    environment: dev
+    environment: prod
 
     steps:
       - name: Checkout
@@ -72,12 +72,12 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init -input=false
-        working-directory: Environment/dev
+        working-directory: Environment/prod
 
       - name: Terraform apply
         id: apply
         run: terraform apply --auto-approve
-        working-directory: Environment/dev
+        working-directory: Environment/prod
         
   
     
