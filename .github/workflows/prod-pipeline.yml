@@ -54,7 +54,7 @@ jobs:
     name: Deploy_Job
     runs-on: self-hosted
     needs: terraform_Build_Job
-    if: github.ref == 'refs/heads/main'
+    if: needs.terraform_Build_Job.result == 'success' && github.ref == 'refs/heads/main'
     environment: prod
 
     steps:
